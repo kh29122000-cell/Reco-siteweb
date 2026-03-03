@@ -1,10 +1,9 @@
-
 "use client"
 
 import React from 'react';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 interface Movie {
@@ -12,6 +11,7 @@ interface Movie {
   genre: string;
   year: number;
   synopsis: string;
+  imageUrl?: string;
 }
 
 interface MovieCardProps {
@@ -22,8 +22,11 @@ interface MovieCardProps {
 }
 
 export function MovieCard({ movie, index, total, swipeDirection }: MovieCardProps) {
-  // Use a predictable placeholder based on index
+  // Use movie image if provided, otherwise fallback to index-based placeholder
   const placeholder = PlaceHolderImages[index % PlaceHolderImages.length];
+  const imageSrc = movie.imageUrl && movie.imageUrl.startsWith('http') 
+    ? movie.imageUrl 
+    : placeholder.imageUrl;
 
   return (
     <Card 
@@ -37,11 +40,11 @@ export function MovieCard({ movie, index, total, swipeDirection }: MovieCardProp
     >
       <div className="relative w-full h-full">
         <Image
-          src={placeholder.imageUrl}
+          src={imageSrc}
           alt={movie.title}
           fill
           className="object-cover brightness-75 transition-transform hover:scale-105 duration-700"
-          data-ai-hint={placeholder.imageHint}
+          data-ai-hint={movie.imageUrl ? "movie poster" : placeholder.imageHint}
         />
         
         {/* Swiping Indicators */}
@@ -61,7 +64,7 @@ export function MovieCard({ movie, index, total, swipeDirection }: MovieCardProp
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-3">
               <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/30">
-                {movie.year}
+                {movie.year > 0 ? movie.year : 'N/A'}
               </Badge>
               <div className="text-xs text-white/60 font-medium uppercase tracking-widest">
                 {movie.genre}

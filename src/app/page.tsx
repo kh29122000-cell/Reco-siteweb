@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState } from 'react';
@@ -8,12 +7,14 @@ import { WatchlistDrawer } from '@/components/filmder/watchlist-drawer';
 import { recommendMovie, MovieRecommendationOutput } from '@/ai/flows/recommend-movie-flow';
 import { useToast } from '@/hooks/use-toast';
 import { Film, Play, Sparkles, Search } from 'lucide-react';
+import { Toaster } from '@/components/ui/toaster';
 
 interface Movie {
   title: string;
   genre: string;
   year: number;
   synopsis: string;
+  imageUrl?: string;
 }
 
 export default function FilmderPage() {
@@ -32,13 +33,13 @@ export default function FilmderPage() {
       setRecommendations(result.recommendations);
       toast({
         title: "Match Found!",
-        description: `We found 5 movies similar to ${title}.`,
+        description: `We found ${result.recommendations.length} movies similar to ${title}.`,
       });
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to fetch recommendations. Please try again.",
+        description: "Failed to fetch recommendations. Please check if Final_FilmsCreuse.csv is present.",
       });
     } finally {
       setIsLoading(false);
@@ -78,7 +79,7 @@ export default function FilmderPage() {
                   <span className="text-primary italic">Cinematic Obsession</span>
                 </h2>
                 <p className="text-xl text-muted-foreground font-body max-w-lg mx-auto leading-relaxed">
-                  Enter a movie you love, and our AI will serve up perfect matches. 
+                  Enter a movie you love, and our AI will search your database for perfect matches. 
                   Swipe right to save, left to skip.
                 </p>
               </div>
@@ -87,7 +88,7 @@ export default function FilmderPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
               {[
                 { icon: Search, title: "Search", desc: "Start with a film you already adore." },
-                { icon: Play, title: "Discover", desc: "Swipe through 5 hand-picked matches." },
+                { icon: Play, title: "Discover", desc: "Swipe through matches from your database." },
                 { icon: Film, title: "Watch", desc: "Build your ultimate movie watchlist." },
               ].map((step, i) => (
                 <div key={i} className="p-6 bg-secondary/50 rounded-3xl border border-white/5">
@@ -108,7 +109,7 @@ export default function FilmderPage() {
             </div>
             <div className="space-y-2">
               <h3 className="text-2xl font-headline font-bold text-white animate-pulse">Calculating matches...</h3>
-              <p className="text-muted-foreground font-body">Analyzing cinematography, mood, and genre patterns.</p>
+              <p className="text-muted-foreground font-body">Analyzing your CSV database for pattern matches.</p>
             </div>
           </div>
         ) : (
@@ -133,6 +134,7 @@ export default function FilmderPage() {
         <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-primary blur-[120px] rounded-full"></div>
         <div className="absolute bottom-[0%] right-[0%] w-[50%] h-[50%] bg-accent blur-[150px] rounded-full"></div>
       </div>
+      <Toaster />
     </main>
   );
 }
