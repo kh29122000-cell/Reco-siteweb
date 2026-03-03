@@ -1,3 +1,34 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "movie-1",
+      "description": "Cinematic drama scene",
+      "imageUrl": "https://images.unsplash.com/photo-1751823886813-0cfc86cb9478?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8bW92aWUlMjBkcmFtYXxlbnwwfHx8fDE3NzI1NTM3MjZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "movie drama"
+    },
+    {
+      "id": "movie-2",
+      "description": "Sci-fi space exploration",
+      "imageUrl": "https://images.unsplash.com/photo-1687985826611-80b714011d0b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxzY2ktZmklMjBzcGFjZXxlbnwwfHx8fDE3NzI0NjAwNDl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "sci-fi space"
+    },
+    {
+      "id": "movie-3",
+      "description": "Action thriller explosion",
+      "imageUrl": "https://images.unsplash.com/photo-1765513275789-3fa26f20badc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxhY3Rpb24lMjB0aHJpbGxlcnxlbnwwfHx8fDE3NzI1NDQ0NDF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "action thriller"
+    },
+    {
+      "id": "movie-4",
+      "description": "Animated colorful world",
+      "imageUrl": "https://images.unsplash.com/photo-1766062854557-4561fb5e79cf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8YW5pbWF0aW9uJTIwZmFudGFzeXxlbnwwfHx8fDE3NzI1NTM3MjZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "animation fantasy"
+    },
+    {
+      "id": "movie-5",
+      "description": "Romantic sunset scene",
+      "imageUrl": "https://images.unsplash.com/photo-1650595808048-5cb2a8c1e314?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxyb21hbmNlJTIwc3Vuc2V0fGVufDB8fHx8MTc3MjU1MzcyNnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "romance sunset"
+    }
+  ]
 }
