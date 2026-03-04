@@ -19,21 +19,21 @@ const MovieRecommendationInputSchema = z.object({
 export type MovieRecommendationInput = z.infer<typeof MovieRecommendationInputSchema>;
 
 const RecommendedMovieSchema = z.object({
-  title: z.string().describe('The title of the recommended movie.'),
-  genre: z.string().describe('The genre(s) of the recommended movie.'),
-  year: z.number().describe('The release year of the recommended movie.'),
-  synopsis: z.string().describe('A brief synopsis of the recommended movie.'),
+  title: z.string().describe('The title of the movie.'),
+  genre: z.string().describe('The genre(s) of the movie.'),
+  year: z.number().describe('The release year of the movie.'),
+  synopsis: z.string().describe('A brief synopsis of the movie.'),
   imageUrl: z.string().optional().describe('A URL to the movie poster or an image related to the film.'),
 });
 
 const MovieRecommendationOutputSchema = z.object({
+  targetMovie: RecommendedMovieSchema.optional().describe('The movie matching the search query, if found.'),
   recommendations: z.array(RecommendedMovieSchema).length(5).describe('An array of 5 similar movies.'),
 });
 export type MovieRecommendationOutput = z.infer<typeof MovieRecommendationOutputSchema>;
 
 /**
  * Loads movie data from the Final_FilmsCreuse.csv file.
- * Falls back to a mock database if the file is not found.
  */
 function loadMoviesFromCSV() {
   const filePath = path.join(process.cwd(), 'Final_FilmsCreuse.csv');
@@ -58,7 +58,7 @@ function loadMoviesFromCSV() {
     }
   }
 
-  // Fallback mock data if CSV is missing or fails
+  // Fallback mock data if CSV is missing
   return [
     {
       title: 'The Shawshank Redemption',
@@ -81,12 +81,30 @@ function loadMoviesFromCSV() {
       synopsis: 'A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.',
       imageUrl: 'https://picsum.photos/seed/7/600/400'
     },
+    {
+      title: 'The Godfather',
+      genre: 'Crime, Drama',
+      year: 1972,
+      synopsis: 'The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.',
+      imageUrl: 'https://picsum.photos/seed/9/600/400'
+    },
+    {
+      title: 'Pulp Fiction',
+      genre: 'Crime, Drama',
+      year: 1994,
+      synopsis: 'The lives of two mob hitmen, a boxer, a gangster and his wife, and a pair of diner bandits intertwine in four tales of violence and redemption.',
+      imageUrl: 'https://picsum.photos/seed/11/600/400'
+    },
+    {
+      title: 'Interstellar',
+      genre: 'Adventure, Drama, Sci-Fi',
+      year: 2014,
+      synopsis: 'A team of explorers travel through a wormhole in space in an attempt to ensure humanity survival.',
+      imageUrl: 'https://picsum.photos/seed/13/600/400'
+    }
   ];
 }
 
-/**
- * A tool that finds similar movies by searching the loaded dataset.
- */
 const getSimilarMoviesTool = ai.defineTool(
   {
     name: 'getSimilarMovies',
@@ -100,12 +118,10 @@ const getSimilarMoviesTool = ai.defineTool(
     const { movieTitle } = input;
     const allMovies = loadMoviesFromCSV();
 
-    // Simple matching logic: find the movie or search by genre
     const targetMovie = allMovies.find(m => m.title.toLowerCase().includes(movieTitle.toLowerCase()));
     
     let candidates = [];
     if (targetMovie) {
-      // Find movies with similar genres
       const targetGenres = targetMovie.genre.split(',').map((g: string) => g.trim().toLowerCase());
       candidates = allMovies.filter(m => {
         if (m.title === targetMovie.title) return false;
@@ -115,7 +131,6 @@ const getSimilarMoviesTool = ai.defineTool(
     }
 
     if (candidates.length < 5) {
-      // Add more random movies if we don't have enough genre matches
       const others = allMovies.filter(m => !candidates.includes(m) && m.title !== targetMovie?.title);
       candidates = [...candidates, ...others.sort(() => 0.5 - Math.random())];
     }
@@ -129,13 +144,12 @@ const recommendMoviePrompt = ai.definePrompt({
   tools: [getSimilarMoviesTool],
   input: { schema: MovieRecommendationInputSchema },
   output: { schema: MovieRecommendationOutputSchema },
-  prompt: `You are a helpful movie recommendation assistant using a specific dataset.
+  prompt: `You are a helpful movie recommendation assistant.
 
-Use the 'getSimilarMovies' tool to find 5 movies that are similar to '{{{movieTitle}}}' from our database.
+First, identify if the exact movie '{{{movieTitle}}}' exists in our database.
+Then, use the 'getSimilarMovies' tool to find 5 movies similar to it.
 
-If the tool returns results, present them exactly as they are in the database, ensuring you include the 'imageUrl' if available. 
-
-Return exactly 5 recommendations in the specified JSON format.`, 
+Return the details of the original movie in 'targetMovie' (if found) and the 5 similar films in 'recommendations'.`, 
 });
 
 const recommendMovieFlow = ai.defineFlow(

@@ -30,16 +30,32 @@ export default function FilmderPage() {
     setHasStarted(true);
     try {
       const result: MovieRecommendationOutput = await recommendMovie({ movieTitle: title });
-      setRecommendations(result.recommendations);
-      toast({
-        title: "Match Found!",
-        description: `We found ${result.recommendations.length} movies similar to ${title}.`,
-      });
+      
+      // Combine target movie and recommendations into the swipe stack
+      const stack: Movie[] = [];
+      if (result.targetMovie) {
+        stack.push(result.targetMovie);
+      }
+      stack.push(...result.recommendations);
+
+      setRecommendations(stack);
+
+      if (result.targetMovie) {
+        toast({
+          title: "Found your film!",
+          description: `Showing ${result.targetMovie.title} and 5 similar matches.`,
+        });
+      } else {
+        toast({
+          title: "No exact match",
+          description: `We couldn't find "${title}", but here are some related suggestions.`,
+        });
+      }
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to fetch recommendations. Please check if Final_FilmsCreuse.csv is present.",
+        description: "Failed to fetch recommendations. Please check your connection.",
       });
     } finally {
       setIsLoading(false);
@@ -79,16 +95,15 @@ export default function FilmderPage() {
                   <span className="text-primary italic">Cinematic Obsession</span>
                 </h2>
                 <p className="text-xl text-muted-foreground font-body max-w-lg mx-auto leading-relaxed">
-                  Enter a movie you love, and our AI will search your database for perfect matches. 
-                  Swipe right to save, left to skip.
+                  Enter a movie you love. We'll show it to you first, then present 5 perfect matches from your database.
                 </p>
               </div>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
               {[
-                { icon: Search, title: "Search", desc: "Start with a film you already adore." },
-                { icon: Play, title: "Discover", desc: "Swipe through matches from your database." },
+                { icon: Search, title: "Search", desc: "Type in your favorite movie title." },
+                { icon: Play, title: "Review", desc: "See your film first, then swipe matches." },
                 { icon: Film, title: "Watch", desc: "Build your ultimate movie watchlist." },
               ].map((step, i) => (
                 <div key={i} className="p-6 bg-secondary/50 rounded-3xl border border-white/5">
@@ -108,8 +123,8 @@ export default function FilmderPage() {
               </div>
             </div>
             <div className="space-y-2">
-              <h3 className="text-2xl font-headline font-bold text-white animate-pulse">Calculating matches...</h3>
-              <p className="text-muted-foreground font-body">Analyzing your CSV database for pattern matches.</p>
+              <h3 className="text-2xl font-headline font-bold text-white animate-pulse">Retrieving film data...</h3>
+              <p className="text-muted-foreground font-body">Analyzing your database for perfect pattern matches.</p>
             </div>
           </div>
         ) : (
